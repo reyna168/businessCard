@@ -1,0 +1,55 @@
+@echo off
+setlocal
+
+:: 設定要檢查的 port
+set PORT=8080
+:: 設定要執行的 Python 檔案
+set PYTHON_SCRIPT=app.py
+:: 設定 Python 檔案所在的目錄
+set WORKING_DIR=C:\path\to\your\script
+
+:: 切換到指定工作目錄
+cd /d "%WORKING_DIR%"
+if %ERRORLEVEL% neq 0 (
+    echo Failed to change directory to %WORKING_DIR%.
+    exit /b 1
+)
+
+:: 檢查 port 是否在 listen 狀態
+netstat -an | find ":%PORT%" | find "LISTENING" > nul
+if %ERRORLEVEL% equ 0 (
+    echo Port %PORT% is already in use.
+    exit /b 1
+) else (
+    echo Port %PORT% is free, starting Python script...
+    :: 執行 Python 程式
+    python %PYTHON_SCRIPT%
+    if %ERRORLEVEL% neq 0 (
+        echo Failed to run Python script.
+        exit /b 1
+    )
+)
+
+
+@echo off
+setlocal
+
+:: 請設定要檢查的 port 號
+set PORT=5000
+
+:: 檢查是否有程式正在 listen 該 port
+netstat -an | findstr ":%PORT%" | findstr /i "LISTENING" >nul
+
+if %errorlevel%==0 (
+    echo Port %PORT% 已經在 LISTEN 狀態，無需啟動。
+) else (
+    echo Port %PORT% 未使用，開始啟動服務...
+    :: 在這裡啟動你的服務，例如：
+    :: python server.py
+    :: node app.js
+    :: 或執行你的應用程式
+    start "" "C:\your\path\to\your_app.exe"
+)
+
+
+
